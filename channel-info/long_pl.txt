@@ -1,0 +1,20 @@
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[10]: playlistVideoThumbnailRenderer
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[17]: videoOwnerRenderer
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[23]: playlistVideoListRenderer
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[24]: playlistVideoRenderer
+.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[73].playlistVideoRenderer.title.runs[0].text: This Video is AI Generated! SORA Review
+.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[77].playlistVideoRenderer.title.runs[0].text: How My Video Gear is Changing!
+.header.playlistHeaderRenderer.title.simpleText: Videos
+.header.playlistHeaderRenderer.numVideosText.runs[1].text:  videos
+.header.playlistHeaderRenderer.stats[0].runs[1].text:  videos
+.header.playlistHeaderRenderer.briefStats[0].runs[1].text:  videos
+.header.playlistHeaderRenderer.byline[0].playlistBylineRenderer.text.runs[1].text:  videos
+.metadata.playlistMetadataRenderer.title: Videos
+.topbar.desktopTopbarRenderer.topbarButtons[0].topbarMenuButtonRenderer.menuRequest.commandMetadata.webCommandMetadata.apiUrl: /youtubei/v1/account/account_menu
+.topbar.desktopTopbarRenderer.topbarButtons[0].topbarMenuButtonRenderer.menuRequest.signalServiceEndpoint.signal: GET_ACCOUNT_MENU
+.topbar.desktopTopbarRenderer.hotkeyDialog.hotkeyDialogRenderer.sections[0].hotkeyDialogSectionRenderer.options[3].hotkeyDialogSectionOptionRenderer.label.runs[0].text: Previous video
+.topbar.desktopTopbarRenderer.hotkeyDialog.hotkeyDialogRenderer.sections[0].hotkeyDialogSectionRenderer.options[4].hotkeyDialogSectionOptionRenderer.label.runs[0].text: Next video
+.topbar.desktopTopbarRenderer.hotkeyDialog.hotkeyDialogRenderer.sections[3].hotkeyDialogSectionRenderer.title.runs[0].text: Spherical Videos
+.microformat.microformatDataRenderer.title: Videos
+.sidebar.playlistSidebarRenderer.items[0].playlistSidebarPrimaryInfoRenderer.title.runs[0].text: Videos
+.sidebar.playlistSidebarRenderer.items[0].playlistSidebarPrimaryInfoRenderer.stats[0].runs[1].text:  videos

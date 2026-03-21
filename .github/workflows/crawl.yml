@@ -1,0 +1,35 @@
+name: Globally Distributed Shorts Crawler Array (V5)
+
+on:
+  schedule:
+    # Runs every 2 hours continuously 24/7 (20 runners * 30,000 shorts = 600,000 shorts per execution)
+    - cron: '0 */2 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  run-crawlers:
+    name: "Bot Array Instance #${{ matrix.instance }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 20 distinct parallel runners operating simultaneously across the globe
+        instance: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js High-Performance Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 📦 Install InnerTube Core Dependencies
+        working-directory: ./crawler
+        run: npm install
+
+      - name: 🚀 Execute Unrestricted Algorithm Extraction
+        working-directory: ./crawler
+        # Runs the script which hooks natively into the Shorts algorithm
+        run: node v5_api_crawler.mjs

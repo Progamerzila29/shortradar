@@ -1,0 +1,35 @@
+{
+  "chipViewModel": {
+    "text": "Oldest",
+    "selected": false,
+    "displayType": "CHIP_VIEW_MODEL_DISPLAY_TYPE_UNSPECIFIED",
+    "tapCommand": {
+      "innertubeCommand": {
+        "clickTrackingParams": "CCgQ4r4OGDMiEwja4te31Z-TAxWwwUkHHTuwEF7KAQT_E6sm",
+        "commandMetadata": {
+          "webCommandMetadata": {
+            "sendPost": true,
+            "apiUrl": "/youtubei/v1/browse"
+          }
+        },
+        "continuationCommand": {
+          "token": "4qmFsgJgEhhVQ0JKeWNzbWR1dllFTDgzUl9VNEpyaVEaRDhnWXdHaTVTTENBRk9pZ0tKRFprT1dRNFpEY3dMVEF3TURBdE1qQXpZaTFoWlRsa0xUVTRNalF5T1dRd1pUUXlPQmdG",
+          "request": "CONTINUATION_REQUEST_TYPE_BROWSE",
+          "command": {
+            "clickTrackingParams": "CCgQ4r4OGDMiEwja4te31Z-TAxWwwUkHHTuwEF7KAQT_E6sm",
+            "showReloadUiCommand": {
+              "targetId": "6d9d8d70-0000-203b-ae9d-582429d0e428"
+            }
+          }
+        }
+      }
+    },
+    "accessibilityLabel": "Oldest",
+    "loggingDirectives": {
+      "trackingParams": "CCgQ4r4OGDMiEwja4te31Z-TAxWwwUkHHTuwEF4=",
+      "visibility": {
+        "types": "12"
+      }
+    }
+  }
+}

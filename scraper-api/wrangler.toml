@@ -1,0 +1,8 @@
+name = "shortradar-scraper-api"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "SHORT_RADAR_CACHE"
+id = "605ab984e11343eabf567903af6bfc39"

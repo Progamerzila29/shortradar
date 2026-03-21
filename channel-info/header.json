@@ -1,0 +1,775 @@
+{
+  "pageHeaderRenderer": {
+    "pageTitle": "Marques Brownlee",
+    "content": {
+      "pageHeaderViewModel": {
+        "title": {
+          "dynamicTextViewModel": {
+            "text": {
+              "content": "Marques Brownlee",
+              "styleRuns": [
+                {
+                  "startIndex": 16,
+                  "styleRunExtensions": {
+                    "styleRunColorMapExtension": {
+                      "colorMap": [
+                        {
+                          "key": "USER_INTERFACE_THEME_DARK",
+                          "value": 4294967295
+                        },
+                        {
+                          "key": "USER_INTERFACE_THEME_LIGHT",
+                          "value": 4279440147
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "attachmentRuns": [
+                {
+                  "startIndex": 16,
+                  "length": 0,
+                  "element": {
+                    "type": {
+                      "imageType": {
+                        "image": {
+                          "sources": [
+                            {
+                              "clientResource": {
+                                "imageName": "CHECK_CIRCLE_FILLED"
+                              },
+                              "width": 24,
+                              "height": 24
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "properties": {
+                      "layoutProperties": {
+                        "height": {
+                          "value": 24,
+                          "unit": "DIMENSION_UNIT_POINT"
+                        },
+                        "width": {
+                          "value": 24,
+                          "unit": "DIMENSION_UNIT_POINT"
+                        },
+                        "margin": {
+                          "left": {
+                            "value": 8,
+                            "unit": "DIMENSION_UNIT_POINT"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "alignment": "ALIGNMENT_VERTICAL_CENTER"
+                }
+              ]
+            },
+            "maxLines": 2,
+            "rendererContext": {
+              "loggingContext": {
+                "loggingDirectives": {
+                  "trackingParams": "CCEQj-QKIhMIxZujptOfkwMVump6BR0kdzFP",
+                  "visibility": {
+                    "types": "12"
+                  },
+                  "clientVeSpec": {
+                    "uiType": 176655,
+                    "veCounter": 152947903
+                  }
+                }
+              },
+              "accessibilityContext": {
+                "label": "Marques Brownlee, Verified"
+              }
+            }
+          }
+        },
+        "image": {
+          "decoratedAvatarViewModel": {
+            "avatar": {
+              "avatarViewModel": {
+                "image": {
+                  "sources": [
+                    {
+                      "url": "https://yt3.googleusercontent.com/qu4TmIaYUlS41-dJ9gZ7DUR3nilvmB5_11i6OKSdvNnBNiyOusZP1bMN6ICnuxtjFBb6ioKgRQ=s72-c-k-c0x00ffffff-no-rj",
+                      "width": 72,
+                      "height": 72
+                    },
+                    {
+                      "url": "https://yt3.googleusercontent.com/qu4TmIaYUlS41-dJ9gZ7DUR3nilvmB5_11i6OKSdvNnBNiyOusZP1bMN6ICnuxtjFBb6ioKgRQ=s120-c-k-c0x00ffffff-no-rj",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "url": "https://yt3.googleusercontent.com/qu4TmIaYUlS41-dJ9gZ7DUR3nilvmB5_11i6OKSdvNnBNiyOusZP1bMN6ICnuxtjFBb6ioKgRQ=s160-c-k-c0x00ffffff-no-rj",
+                      "width": 160,
+                      "height": 160
+                    }
+                  ],
+                  "processor": {
+                    "borderImageProcessor": {
+                      "circular": true
+                    }
+                  }
+                },
+                "avatarImageSize": "AVATAR_SIZE_XL",
+                "loggingDirectives": {
+                  "trackingParams": "CCAQ6OENIhMIxZujptOfkwMVump6BR0kdzFP",
+                  "visibility": {
+                    "types": "12"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "contentMetadataViewModel": {
+            "metadataRows": [
+              {
+                "metadataParts": [
+                  {
+                    "text": {
+                      "content": "@mkbhd",
+                      "styleRuns": [
+                        {
+                          "weightLabel": "FONT_WEIGHT_MEDIUM",
+                          "styleRunExtensions": {
+                            "styleRunColorMapExtension": {
+                              "colorMap": [
+                                {
+                                  "key": "USER_INTERFACE_THEME_DARK",
+                                  "value": 4294967295
+                                },
+                                {
+                                  "key": "USER_INTERFACE_THEME_LIGHT",
+                                  "value": 4279440147
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "enableTruncation": true
+                  }
+                ]
+              },
+              {
+                "metadataParts": [
+                  {
+                    "text": {
+                      "content": "20.8M subscribers"
+                    },
+                    "accessibilityLabel": "20.8 million subscribers"
+                  },
+                  {
+                    "text": {
+                      "content": "1.8K videos",
+                      "styleRuns": [
+                        {
+                          "startIndex": 0,
+                          "length": 11
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "delimiter": "•",
+            "rendererContext": {
+              "loggingContext": {
+                "loggingDirectives": {
+                  "trackingParams": "CB8Q9eQKIhMIxZujptOfkwMVump6BR0kdzFP",
+                  "visibility": {
+                    "types": "12"
+                  },
+                  "clientVeSpec": {
+                    "uiType": 176757,
+                    "veCounter": 152947902
+                  }
+                }
+              }
+            }
+          }
+        },
+        "actions": {
+          "flexibleActionsViewModel": {
+            "actionsRows": [
+              {
+                "actions": [
+                  {
+                    "buttonViewModel": {
+                      "title": "Subscribe",
+                      "onTap": {
+                        "innertubeCommand": {
+                          "clickTrackingParams": "CBsQjqULIhMIxZujptOfkwMVump6BR0kdzFPygEEmQzBvw==",
+                          "commandMetadata": {
+                            "webCommandMetadata": {
+                              "ignoreNavigation": true
+                            }
+                          },
+                          "modalEndpoint": {
+                            "modal": {
+                              "modalWithTitleAndButtonRenderer": {
+                                "title": {
+                                  "simpleText": "Want to subscribe to this channel?"
+                                },
+                                "content": {
+                                  "simpleText": "Sign in to subscribe to this channel."
+                                },
+                                "button": {
+                                  "buttonRenderer": {
+                                    "style": "STYLE_MONO_FILLED",
+                                    "size": "SIZE_DEFAULT",
+                                    "isDisabled": false,
+                                    "text": {
+                                      "simpleText": "Sign in"
+                                    },
+                                    "navigationEndpoint": {
+                                      "clickTrackingParams": "CB4Q_YYEIhMIxZujptOfkwMVump6BR0kdzFPMglzdWJzY3JpYmXKAQSZDMG_",
+                                      "commandMetadata": {
+                                        "webCommandMetadata": {
+                                          "url": "https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3D%252F%2540mkbhd%26continue_action%3DQUFFLUhqbUh0SEhNa2t0VGYtSlNMY3RsbnB4aXVJZm1kUXxBQ3Jtc0tsdDd1S2pJZFA3UTltSkZmUkp1Vl83M3pteTZfVUZFSks0VW56akFXWFFQdmo4eXhwczFkRnl6allfeVdialE0ZHM2dmo5cGJ2aTFxWEU0TGh0eDR6ZFVyS1FLUDA4RmpXNG5XMDRvQ0dkV0F2bmFnSHU0cFhIZGVtNnd2c3BXNFBDZlowMEdXOWN5c29OdWYxVE9lTXRoRlVONS1qTXFYZ2pjQjNSaGhzWWJDZkpOd24wRU5HWWJHOUZGaDE4czRyUTE2emo&hl=en&ec=66429",
+                                          "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                                          "rootVe": 83769
+                                        }
+                                      },
+                                      "signInEndpoint": {
+                                        "nextEndpoint": {
+                                          "clickTrackingParams": "CB4Q_YYEIhMIxZujptOfkwMVump6BR0kdzFPygEEmQzBvw==",
+                                          "commandMetadata": {
+                                            "webCommandMetadata": {
+                                              "url": "/@mkbhd",
+                                              "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                                              "rootVe": 3611,
+                                              "apiUrl": "/youtubei/v1/browse"
+                                            }
+                                          },
+                                          "browseEndpoint": {
+                                            "browseId": "UCBJycsmduvYEL83R_U4JriQ",
+                                            "params": "EgA%3D",
+                                            "canonicalBaseUrl": "/@mkbhd"
+                                          }
+                                        },
+                                        "continueAction": "QUFFLUhqbUh0SEhNa2t0VGYtSlNMY3RsbnB4aXVJZm1kUXxBQ3Jtc0tsdDd1S2pJZFA3UTltSkZmUkp1Vl83M3pteTZfVUZFSks0VW56akFXWFFQdmo4eXhwczFkRnl6allfeVdialE0ZHM2dmo5cGJ2aTFxWEU0TGh0eDR6ZFVyS1FLUDA4RmpXNG5XMDRvQ0dkV0F2bmFnSHU0cFhIZGVtNnd2c3BXNFBDZlowMEdXOWN5c29OdWYxVE9lTXRoRlVONS1qTXFYZ2pjQjNSaGhzWWJDZkpOd24wRU5HWWJHOUZGaDE4czRyUTE2emo",
+                                        "idamTag": "66429"
+                                      }
+                                    },
+                                    "trackingParams": "CB4Q_YYEIhMIxZujptOfkwMVump6BR0kdzFP"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "accessibilityText": "Subscribe",
+                      "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+                      "trackingParams": "CBsQjqULIhMIxZujptOfkwMVump6BR0kdzFP",
+                      "isFullWidth": false,
+                      "type": "BUTTON_VIEW_MODEL_TYPE_FILLED",
+                      "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+                      "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+                    }
+                  },
+                  {
+                    "buttonViewModel": {
+                      "iconName": "SPONSORSHIP_STAR",
+                      "title": "Join",
+                      "onTap": {
+                        "innertubeCommand": {
+                          "clickTrackingParams": "CBwQocYHGAIiEwjFm6Om05-TAxW6anoFHSR3MU_KAQSZDMG_",
+                          "commandMetadata": {
+                            "webCommandMetadata": {
+                              "ignoreNavigation": true
+                            }
+                          },
+                          "modalEndpoint": {
+                            "modal": {
+                              "modalWithTitleAndButtonRenderer": {
+                                "title": {
+                                  "runs": [
+                                    {
+                                      "text": "Want to join this channel?"
+                                    }
+                                  ]
+                                },
+                                "content": {
+                                  "runs": [
+                                    {
+                                      "text": "Sign in to become a member."
+                                    }
+                                  ]
+                                },
+                                "button": {
+                                  "buttonRenderer": {
+                                    "style": "STYLE_BRAND",
+                                    "size": "SIZE_DEFAULT",
+                                    "isDisabled": false,
+                                    "text": {
+                                      "simpleText": "Sign in"
+                                    },
+                                    "navigationEndpoint": {
+                                      "clickTrackingParams": "CB0Q8FsiEwjFm6Om05-TAxW6anoFHSR3MU_KAQSZDMG_",
+                                      "commandMetadata": {
+                                        "webCommandMetadata": {
+                                          "url": "https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F%2540mkbhd%253Fcbrd%253D1%2526ucbcb%253D1&hl=en",
+                                          "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                                          "rootVe": 83769
+                                        }
+                                      },
+                                      "signInEndpoint": {
+                                        "hack": true
+                                      }
+                                    },
+                                    "trackingParams": "CB0Q8FsiEwjFm6Om05-TAxW6anoFHSR3MU8="
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "accessibilityText": "Join this channel",
+                      "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+                      "trackingParams": "CBwQocYHGAIiEwjFm6Om05-TAxW6anoFHSR3MU8=",
+                      "isFullWidth": false,
+                      "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                      "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+                      "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE",
+                      "accessibilityId": "id.sponsor_button",
+                      "onVisible": {
+                        "innertubeCommand": {
+                          "clickTrackingParams": "CBwQocYHGAIiEwjFm6Om05-TAxW6anoFHSR3MU_KAQSZDMG_",
+                          "logFlowLoggingEventCommand": {
+                            "flowEventType": 1,
+                            "flowEventNamespace": "FLOW_EVENT_NAMESPACE_SPONSORSHIPS_PURCHASE",
+                            "flowType": "FLOW_TYPE_SPONSORSHIPS_PURCHASE",
+                            "flowEventMetadata": {
+                              "sponsorshipsPurchaseContext": {
+                                "joinMethod": "SPONSORSHIPS_JOIN_METHOD_CHANNEL_PAGE_BUTTON"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "targetId": "sponsorships-button",
+                      "loggingDirectives": {
+                        "trackingParams": "CBwQocYHGAIiEwjFm6Om05-TAxW6anoFHSR3MU8=",
+                        "visibility": {
+                          "types": "12"
+                        },
+                        "clientVeSpec": {
+                          "uiType": 123681,
+                          "veCounter": 152947901
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "justifyContent": "FLEXIBLE_ACTIONS_JUSTIFY_CONTENT_START",
+            "minimumRowHeight": 44,
+            "rendererContext": {
+              "loggingContext": {
+                "loggingDirectives": {
+                  "trackingParams": "CBsQjqULIhMIxZujptOfkwMVump6BR0kdzFP",
+                  "visibility": {
+                    "types": "12"
+                  },
+                  "clientVeSpec": {
+                    "uiType": 184974,
+                    "veCounter": 152947900
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": {
+          "descriptionPreviewViewModel": {
+            "description": {
+              "content": "MKBHD: Quality Tech Videos | YouTuber | Geek | Consumer Electronics | Tech Head | Internet Personality! "
+            },
+            "maxLines": 2,
+            "truncationText": {
+              "content": "...more",
+              "styleRuns": [
+                {
+                  "startIndex": 0,
+                  "length": 7,
+                  "weight": 500
+                }
+              ]
+            },
+            "alwaysShowTruncationText": true,
+            "rendererContext": {
+              "loggingContext": {
+                "loggingDirectives": {
+                  "trackingParams": "CBYQr_4KIhMIxZujptOfkwMVump6BR0kdzFP",
+                  "visibility": {
+                    "types": "12"
+                  },
+                  "clientVeSpec": {
+                    "uiType": 180015,
+                    "veCounter": 152947899
+                  }
+                }
+              },
+              "accessibilityContext": {
+                "label": "Description. MKBHD: Quality Tech Videos | YouTuber | Geek | Consumer Elec...tap for more."
+              },
+              "commandContext": {
+                "onTap": {
+                  "innertubeCommand": {
+                    "clickTrackingParams": "CBYQr_4KIhMIxZujptOfkwMVump6BR0kdzFPygEEmQzBvw==",
+                    "showEngagementPanelEndpoint": {
+                      "engagementPanel": {
+                        "engagementPanelSectionListRenderer": {
+                          "header": {
+                            "engagementPanelTitleHeaderRenderer": {
+                              "title": {
+                                "simpleText": "Marques Brownlee"
+                              },
+                              "visibilityButton": {
+                                "buttonRenderer": {
+                                  "style": "STYLE_DEFAULT",
+                                  "size": "SIZE_DEFAULT",
+                                  "isDisabled": false,
+                                  "icon": {
+                                    "iconType": "CLOSE"
+                                  },
+                                  "accessibility": {
+                                    "label": "Close"
+                                  },
+                                  "trackingParams": "CBoQ8FsiEwjFm6Om05-TAxW6anoFHSR3MU8=",
+                                  "accessibilityData": {
+                                    "accessibilityData": {
+                                      "label": "Close"
+                                    }
+                                  },
+                                  "command": {
+                                    "clickTrackingParams": "CBoQ8FsiEwjFm6Om05-TAxW6anoFHSR3MU_KAQSZDMG_",
+                                    "changeEngagementPanelVisibilityAction": {
+                                      "targetId": "6f39419a-0000-2724-9e0f-14223baeb722",
+                                      "visibility": "ENGAGEMENT_PANEL_VISIBILITY_HIDDEN"
+                                    }
+                                  }
+                                }
+                              },
+                              "trackingParams": "CBcQ040EIhMIxZujptOfkwMVump6BR0kdzFP"
+                            }
+                          },
+                          "content": {
+                            "sectionListRenderer": {
+                              "contents": [
+                                {
+                                  "itemSectionRenderer": {
+                                    "contents": [
+                                      {
+                                        "continuationItemRenderer": {
+                                          "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+                                          "continuationEndpoint": {
+                                            "clickTrackingParams": "CBkQuy8YACITCMWbo6bTn5MDFbpqegUdJHcxT8oBBJkMwb8=",
+                                            "commandMetadata": {
+                                              "webCommandMetadata": {
+                                                "sendPost": true,
+                                                "apiUrl": "/youtubei/v1/browse"
+                                              }
+                                            },
+                                            "continuationCommand": {
+                                              "token": "4qmFsgJgEhhVQ0JKeWNzbWR1dllFTDgzUl9VNEpyaVEaRDhnWXJHaW1hQVNZS0pEWm1NemswTVRsaUxUQXdNREF0TWpjeU5DMDVaVEJtTFRFME1qSXpZbUZsWWpjeU1nJTNEJTNE",
+                                              "request": "CONTINUATION_REQUEST_TYPE_BROWSE"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    "trackingParams": "CBkQuy8YACITCMWbo6bTn5MDFbpqegUdJHcxTw==",
+                                    "sectionIdentifier": "6f39419b-0000-2724-9e0f-14223baeb722",
+                                    "targetId": "6f39419b-0000-2724-9e0f-14223baeb722"
+                                  }
+                                }
+                              ],
+                              "trackingParams": "CBgQui8iEwjFm6Om05-TAxW6anoFHSR3MU8=",
+                              "scrollPaneStyle": {
+                                "scrollable": true
+                              }
+                            }
+                          },
+                          "targetId": "6f39419a-0000-2724-9e0f-14223baeb722",
+                          "identifier": {
+                            "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+                            "tag": "6f39419a-0000-2724-9e0f-14223baeb722"
+                          }
+                        }
+                      },
+                      "identifier": {
+                        "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+                        "tag": "6f39419a-0000-2724-9e0f-14223baeb722"
+                      },
+                      "engagementPanelPresentationConfigs": {
+                        "engagementPanelPopupPresentationConfig": {
+                          "popupType": "PANEL_POPUP_TYPE_DIALOG"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "attribution": {
+          "attributionViewModel": {
+            "text": {
+              "content": "twitter.com/MKBHD",
+              "commandRuns": [
+                {
+                  "startIndex": 0,
+                  "length": 17,
+                  "onTap": {
+                    "innertubeCommand": {
+                      "clickTrackingParams": "CBEQjaULIhMIxZujptOfkwMVump6BR0kdzFPygEEmQzBvw==",
+                      "commandMetadata": {
+                        "webCommandMetadata": {
+                          "url": "https://www.youtube.com/redirect?event=channel_header&redir_token=QUFFLUhqbWR2NGI0dXh6Nm5XS1AwSm1WZmw2MFFSRFRIQXxBQ3Jtc0ttOUxoRklydC1RX1NERDctZEI3WFVrYmRvTWFUV1lfOEVYLU9nVHFBN0wzUEJnSGJQUHMyaHVUTTZWVFZmaXEyT3g0U0JjNGFRN0J6QWlwWnhPdENIeGx5OXM3Y3RFMDVYQmFoUUstTXJTWDRvbDZHOA&q=http%3A%2F%2Ftwitter.com%2FMKBHD",
+                          "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                          "rootVe": 83769
+                        }
+                      },
+                      "urlEndpoint": {
+                        "url": "https://www.youtube.com/redirect?event=channel_header&redir_token=QUFFLUhqbWR2NGI0dXh6Nm5XS1AwSm1WZmw2MFFSRFRIQXxBQ3Jtc0ttOUxoRklydC1RX1NERDctZEI3WFVrYmRvTWFUV1lfOEVYLU9nVHFBN0wzUEJnSGJQUHMyaHVUTTZWVFZmaXEyT3g0U0JjNGFRN0J6QWlwWnhPdENIeGx5OXM3Y3RFMDVYQmFoUUstTXJTWDRvbDZHOA&q=http%3A%2F%2Ftwitter.com%2FMKBHD",
+                        "target": "TARGET_NEW_WINDOW"
+                      }
+                    }
+                  }
+                }
+              ],
+              "styleRuns": [
+                {
+                  "weightLabel": "FONT_WEIGHT_NORMAL",
+                  "styleRunExtensions": {
+                    "styleRunColorMapExtension": {
+                      "colorMap": [
+                        {
+                          "key": "USER_INTERFACE_THEME_DARK",
+                          "value": 4282296063
+                        },
+                        {
+                          "key": "USER_INTERFACE_THEME_LIGHT",
+                          "value": 4278607828
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "suffix": {
+              "content": "and 4 more links",
+              "commandRuns": [
+                {
+                  "startIndex": 0,
+                  "length": 16,
+                  "onTap": {
+                    "innertubeCommand": {
+                      "clickTrackingParams": "CBEQjaULIhMIxZujptOfkwMVump6BR0kdzFPygEEmQzBvw==",
+                      "showEngagementPanelEndpoint": {
+                        "engagementPanel": {
+                          "engagementPanelSectionListRenderer": {
+                            "header": {
+                              "engagementPanelTitleHeaderRenderer": {
+                                "title": {
+                                  "simpleText": "Marques Brownlee"
+                                },
+                                "visibilityButton": {
+                                  "buttonRenderer": {
+                                    "style": "STYLE_DEFAULT",
+                                    "size": "SIZE_DEFAULT",
+                                    "isDisabled": false,
+                                    "icon": {
+                                      "iconType": "CLOSE"
+                                    },
+                                    "accessibility": {
+                                      "label": "Close"
+                                    },
+                                    "trackingParams": "CBUQ8FsiEwjFm6Om05-TAxW6anoFHSR3MU8=",
+                                    "accessibilityData": {
+                                      "accessibilityData": {
+                                        "label": "Close"
+                                      }
+                                    },
+                                    "command": {
+                                      "clickTrackingParams": "CBUQ8FsiEwjFm6Om05-TAxW6anoFHSR3MU_KAQSZDMG_",
+                                      "changeEngagementPanelVisibilityAction": {
+                                        "targetId": "6f39419c-0000-2724-9e0f-14223baeb722",
+                                        "visibility": "ENGAGEMENT_PANEL_VISIBILITY_HIDDEN"
+                                      }
+                                    }
+                                  }
+                                },
+                                "trackingParams": "CBIQ040EIhMIxZujptOfkwMVump6BR0kdzFP"
+                              }
+                            },
+                            "content": {
+                              "sectionListRenderer": {
+                                "contents": [
+                                  {
+                                    "itemSectionRenderer": {
+                                      "contents": [
+                                        {
+                                          "continuationItemRenderer": {
+                                            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+                                            "continuationEndpoint": {
+                                              "clickTrackingParams": "CBQQuy8YACITCMWbo6bTn5MDFbpqegUdJHcxT8oBBJkMwb8=",
+                                              "commandMetadata": {
+                                                "webCommandMetadata": {
+                                                  "sendPost": true,
+                                                  "apiUrl": "/youtubei/v1/browse"
+                                                }
+                                              },
+                                              "continuationCommand": {
+                                                "token": "4qmFsgJgEhhVQ0JKeWNzbWR1dllFTDgzUl9VNEpyaVEaRDhnWXJHaW1hQVNZS0pEWm1NemswTVRsa0xUQXdNREF0TWpjeU5DMDVaVEJtTFRFME1qSXpZbUZsWWpjeU1nJTNEJTNE",
+                                                "request": "CONTINUATION_REQUEST_TYPE_BROWSE"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "trackingParams": "CBQQuy8YACITCMWbo6bTn5MDFbpqegUdJHcxTw==",
+                                      "sectionIdentifier": "6f39419d-0000-2724-9e0f-14223baeb722",
+                                      "targetId": "6f39419d-0000-2724-9e0f-14223baeb722"
+                                    }
+                                  }
+                                ],
+                                "trackingParams": "CBMQui8iEwjFm6Om05-TAxW6anoFHSR3MU8=",
+                                "scrollPaneStyle": {
+                                  "scrollable": true
+                                }
+                              }
+                            },
+                            "targetId": "6f39419c-0000-2724-9e0f-14223baeb722",
+                            "identifier": {
+                              "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+                              "tag": "6f39419c-0000-2724-9e0f-14223baeb722"
+                            }
+                          }
+                        },
+                        "identifier": {
+                          "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+                          "tag": "6f39419c-0000-2724-9e0f-14223baeb722"
+                        },
+                        "engagementPanelPresentationConfigs": {
+                          "engagementPanelPopupPresentationConfig": {
+                            "popupType": "PANEL_POPUP_TYPE_DIALOG"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "styleRuns": [
+                {
+                  "fontName": "",
+                  "fontSize": 0,
+                  "weightLabel": "FONT_WEIGHT_MEDIUM"
+                }
+              ]
+            },
+            "rendererContext": {
+              "loggingContext": {
+                "loggingDirectives": {
+                  "trackingParams": "CBEQjaULIhMIxZujptOfkwMVump6BR0kdzFP",
+                  "visibility": {
+                    "types": "12"
+                  },
+                  "clientVeSpec": {
+                    "uiType": 184973,
+                    "veCounter": 152947898
+                  }
+                }
+              }
+            }
+          }
+        },
+        "banner": {
+          "imageBannerViewModel": {
+            "image": {
+              "sources": [
+                {
+                  "url": "https://yt3.googleusercontent.com/XA31-2SawRGJzardBRuNOHctuWS9K6WOvFaQVVjn0UmLXpSkj5JIp7pIik6TwZGZBjKgln_ENw=w1060-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+                  "width": 1060,
+                  "height": 175
+                },
+                {
+                  "url": "https://yt3.googleusercontent.com/XA31-2SawRGJzardBRuNOHctuWS9K6WOvFaQVVjn0UmLXpSkj5JIp7pIik6TwZGZBjKgln_ENw=w1138-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+                  "width": 1138,
+                  "height": 188
+                },
+                {
+                  "url": "https://yt3.googleusercontent.com/XA31-2SawRGJzardBRuNOHctuWS9K6WOvFaQVVjn0UmLXpSkj5JIp7pIik6TwZGZBjKgln_ENw=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+                  "width": 1707,
+                  "height": 283
+                },
+                {
+                  "url": "https://yt3.googleusercontent.com/XA31-2SawRGJzardBRuNOHctuWS9K6WOvFaQVVjn0UmLXpSkj5JIp7pIik6TwZGZBjKgln_ENw=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+                  "width": 2120,
+                  "height": 351
+                },
+                {
+                  "url": "https://yt3.googleusercontent.com/XA31-2SawRGJzardBRuNOHctuWS9K6WOvFaQVVjn0UmLXpSkj5JIp7pIik6TwZGZBjKgln_ENw=w2276-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+                  "width": 2276,
+                  "height": 377
+                },
+                {
+                  "url": "https://yt3.googleusercontent.com/XA31-2SawRGJzardBRuNOHctuWS9K6WOvFaQVVjn0UmLXpSkj5JIp7pIik6TwZGZBjKgln_ENw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+                  "width": 2560,
+                  "height": 424
+                }
+              ]
+            },
+            "style": "IMAGE_BANNER_STYLE_INSET",
+            "rendererContext": {
+              "loggingContext": {
+                "loggingDirectives": {
+                  "trackingParams": "CBAQnfILIhMIxZujptOfkwMVump6BR0kdzFP",
+                  "visibility": {
+                    "types": "12"
+                  },
+                  "clientVeSpec": {
+                    "uiType": 194845,
+                    "veCounter": 152947897
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rendererContext": {
+          "loggingContext": {
+            "loggingDirectives": {
+              "trackingParams": "CA8Qot8KIhMIxZujptOfkwMVump6BR0kdzFP",
+              "visibility": {
+                "types": "12"
+              },
+              "clientVeSpec": {
+                "uiType": 176034,
+                "veCounter": 152947896
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

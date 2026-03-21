@@ -1,0 +1,16 @@
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[10]: playlistVideoThumbnailRenderer
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[17]: videoOwnerRenderer
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[23]: playlistVideoListRenderer
+.responseContext.webResponseContextExtensionData.webResponseContextPreloadData.preloadMessageNames[24]: playlistVideoRenderer
+.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.title.runs[0].text: Countdown to 8 Million!
+.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.title.accessibility.accessibilityData.label: Countdown to 8 Million!
+.header.playlistHeaderRenderer.numVideosText.runs[1].text:  videos
+.header.playlistHeaderRenderer.stats[0].runs[1].text:  videos
+.header.playlistHeaderRenderer.briefStats[0].runs[1].text:  videos
+.header.playlistHeaderRenderer.byline[0].playlistBylineRenderer.text.runs[1].text:  videos
+.topbar.desktopTopbarRenderer.topbarButtons[0].topbarMenuButtonRenderer.menuRequest.commandMetadata.webCommandMetadata.apiUrl: /youtubei/v1/account/account_menu
+.topbar.desktopTopbarRenderer.topbarButtons[0].topbarMenuButtonRenderer.menuRequest.signalServiceEndpoint.signal: GET_ACCOUNT_MENU
+.topbar.desktopTopbarRenderer.hotkeyDialog.hotkeyDialogRenderer.sections[0].hotkeyDialogSectionRenderer.options[3].hotkeyDialogSectionOptionRenderer.label.runs[0].text: Previous video
+.topbar.desktopTopbarRenderer.hotkeyDialog.hotkeyDialogRenderer.sections[0].hotkeyDialogSectionRenderer.options[4].hotkeyDialogSectionOptionRenderer.label.runs[0].text: Next video
+.topbar.desktopTopbarRenderer.hotkeyDialog.hotkeyDialogRenderer.sections[3].hotkeyDialogSectionRenderer.title.runs[0].text: Spherical Videos
+.sidebar.playlistSidebarRenderer.items[0].playlistSidebarPrimaryInfoRenderer.stats[0].runs[1].text:  videos
