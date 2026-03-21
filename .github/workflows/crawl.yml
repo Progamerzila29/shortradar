@@ -1,6 +1,10 @@
 name: Globally Distributed Shorts Crawler Array (V5)
 
 on:
+  push:
+    branches:
+      - main
+      - master
   schedule:
     # Runs every 2 hours continuously 24/7 (20 runners * 30,000 shorts = 600,000 shorts per execution)
     - cron: '0 */2 * * *'
