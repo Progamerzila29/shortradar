@@ -1,15 +1,7 @@
 import { Innertube } from 'youtubei.js';
 
 const WORKER_API = "https://shortradar-scraper-api.shortradar.workers.dev";
-const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
-const INNERTUBE_URL = `https://www.youtube.com/youtubei/v1/player?key=${INNERTUBE_KEY}`;
-const CONTEXT = {
-  client: {
-    clientName: "WEB",
-    clientVersion: "2.20231121.09.00",
-    hl: "en",
-  },
-};
+
 
 function dispatchToWorker(vid, channelId, publishDate) {
     if (!channelId) return;
@@ -37,28 +29,44 @@ async function loopFeed() {
   
   const yt = await Innertube.create({ generate_session_locally: true });
 
-  // [STAGE 1: MICRO-FILTER] Validate the Upload Date locally utilizing raw POST fetch for ultimate speed and accuracy
+  // [STAGE 1: MICRO-FILTER] Validate the Upload Date by scraping raw HTML meta tag
+  // (The /youtubei/v1/player endpoint stopped returning microformat data — HTML scrape is the proven fix)
   async function verifyAndDispatch(vid) {
     try {
-      const res = await fetch(INNERTUBE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ videoId: vid, context: CONTEXT }),
+      const res = await fetch(`https://www.youtube.com/shorts/${vid}`, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+          "Accept-Language": "en-US,en;q=0.9",
+        },
       });
-      
-      const data = await res.json();
-      const publishDate = data?.microformat?.playerMicroformatRenderer?.publishDate; // YYYY-MM-DD
-      const channelId = data?.videoDetails?.channelId;
-      
-      // Strict mathematically verified string comparator 
-      if (!publishDate || publishDate < "2025-01-01") {
-        process.stdout.write(`\n\x1b[31m❌ [${vid} Old: ${publishDate || "Unknown"}]\x1b[0m`);
+
+      const html = await res.text();
+
+      // Extract the datePublished meta tag: <meta itemprop="datePublished" content="2025-03-15">
+      const dateMatch = html.match(/"datePublished"\s*:\s*"(\d{4}-\d{2}-\d{2})"/);
+      const publishDate = dateMatch ? dateMatch[1] : null;
+
+      // Extract channelId from the HTML
+      const channelMatch = html.match(/"channelId"\s*:\s*"(UC[a-zA-Z0-9_-]{22})"/);
+      const channelId = channelMatch ? channelMatch[1] : null;
+
+      // Strict date comparator — if unknown, assume Too New and let Cloudflare Worker decide
+      if (!publishDate) {
+        // Can't determine date — pass it to the Worker as a potential new Short
+        if (channelId) {
+          process.stdout.write(`\n\x1b[33m⚠️ [${vid} Date unknown — dispatching to Worker for deeper check]\x1b[0m`);
+          dispatchToWorker(vid, channelId, null);
+        }
+        return;
+      }
+
+      if (publishDate < "2025-01-01") {
+        process.stdout.write(`\n\x1b[31m❌ [${vid} Old: ${publishDate}]\x1b[0m`);
         return;
       }
 
       // It survived! Send this brand new Short to the Cloudflare Worker!
       process.stdout.write(`\n\x1b[32m✅ [${vid} New: ${publishDate}]\x1b[0m`);
-      
       dispatchToWorker(vid, channelId, publishDate);
 
     } catch (err) {
