@@ -210,7 +210,7 @@ async function processOne(vid) {
   dig(about); dig(shorts);
 
   if (subs > MAX_SUBS) { console.log(`  \x1b[31m[G1 SUBS] ${chName} → ${subsTxt} > 100k\x1b[0m`); gates.subs++; return; }
-  if (nLong > 0 || nLive > 0) { console.log(`  \x1b[31m[G2 LONG] ${chName} → long:${nLong} live:${nLive}\x1b[0m`); gates.longLive++; return; }
+  if (nLong > 10 || nLive > 10) { console.log(`  \x1b[31m[G2 LONG] ${chName} → long:${nLong} live:${nLive}\x1b[0m`); gates.longLive++; return; }
 
   const rs = []; let oldTok = null;
   function ps(o) {
