@@ -124,7 +124,7 @@ function grabChannelId(str) {
 async function searchSeeds(query) {
   try {
     // EgIQAQ== is the base64 for "Shorts" filter (type=video, duration=short)
-    const data = await ytMweb('search', { query, params: "EgIQAQ%3D%3D" });
+    const data = await ytMweb('search', { query, params: "EgIYAQ%3D%3D" });
     return grabIds(data);
   } catch(e) { return []; }
 }
