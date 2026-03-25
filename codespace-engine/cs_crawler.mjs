@@ -2,10 +2,10 @@ import pkg from 'pg';
 const { Pool } = pkg;
 
 // ================================================================
-// SHORTRADAR V6.3 — FINAL PRODUCTION ENGINE
-// ✅ Zero Cloudflare | ✅ Direct CockroachDB | ✅ MWEB /next only
-// ✅ channelId from /next (no blocked /player call)
-// ✅ Verbose per-gate logs | ✅ Bounded concurrency
+// SHORTRADAR V6.5 — MULTI-NICHE SEARCH-SEEDED ENGINE
+// ✅ Zero Cloudflare | ✅ Direct CockroachDB | ✅ /search seeding
+// ✅ 20+ genre queries → 400+ diverse seeds → zero echo chamber
+// ✅ Re-seeds every 60s to escape recommendation bubbles
 // ================================================================
 
 const DATABASE_URL = 'postgresql://muataz:0L27YGOK_Eircx-52BD2Ig@shortradar-db-13409.jxf.gcp-europe-west3.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full';
@@ -19,12 +19,40 @@ const MAX_SUBS = 100_000;
 const MIN_AVG  = 10_000;
 const THREADS  = 20;
 
-// ── Seeds — Dynamically loaded from Database ─────────────────
-const seeds = [];
+// ── 30 diverse niche queries for search seeding ──────────────
+const NICHE_QUERIES = [
+  "shorts funny moments", "shorts cooking recipe", "shorts workout gym",
+  "shorts scary story", "shorts car race", "shorts travel vlog",
+  "shorts makeup tutorial", "shorts gaming clips", "shorts soccer goals",
+  "shorts guitar music", "shorts street food", "shorts prank gone wrong",
+  "shorts life hack", "shorts satisfying video", "shorts motivational speech",
+  "shorts dance trend", "shorts cat dog pet", "shorts magic trick",
+  "shorts drawing art", "shorts science experiment", "shorts fashion outfit",
+  "shorts basketball dunk", "shorts nature wildlife", "shorts comedy skit",
+  "shorts singing voice", "shorts cleaning asmr", "shorts drone footage",
+  "shorts boxing fight", "shorts baking cake", "shorts fishing catch"
+];
+
+// ── Hardcoded diverse fallback seeds (NOT kids content) ──────
+const FALLBACK_SEEDS = [
+  // Comedy/funny
+  "2bGuEYJpCkA", "Tt7bzxurJ1I", "lPcR5RVXHMg",
+  // Fitness/gym
+  "gey73pgMuMM", "ml6cT4AZdqI",
+  // Cooking
+  "1ahpSTf_Duw", "GKI_ij_breU",
+  // Music  
+  "L_jWHffIx5E", "pt8VYOfr8To",
+  // Gaming
+  "MP8ISaoKaBo", "LCVKSxIGmaU",
+  // Cars
+  "cEvUBFN3b_4", "vVXIK1xFNgU"
+];
 
 // ── Stats ─────────────────────────────────────────────────────
 let crawled=0, processed=0, inserted=0;
 const gates = { noChannel:0, dupChannel:0, subs:0, longLive:0, fewShorts:0, traction:0, tooOld:0, noDate:0, dbErr:0 };
+const seeds = [];
 const seenVid = new Set();
 const seenCh  = new Set();
 const t0 = Date.now();
@@ -33,10 +61,10 @@ const GL = ["US","GB","FR"];
 setInterval(() => {
   const m = ((Date.now()-t0)/60000).toFixed(1);
   const r = Math.round(crawled/Math.max(1,(Date.now()-t0)/60000));
-  const dropped = Object.values(gates).reduce((a,b)=>a+b,0);
   console.log(`\n\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m`);
   console.log(`⏱ ${m}min | 🔎 ${crawled.toLocaleString()} crawled | ✅ ${processed} checked | 💚 ${inserted} inserted | 📈 ${r}/min`);
   console.log(`🚫 Drops → noChId:${gates.noChannel} | dupCh:${gates.dupChannel} | subs:${gates.subs} | long/live:${gates.longLive} | fewShorts:${gates.fewShorts} | lowViews:${gates.traction} | tooOld:${gates.tooOld} | noDate:${gates.noDate} | db:${gates.dbErr}`);
+  console.log(`🌱 Seed pool: ${seeds.length} | Seen vids: ${seenVid.size} | Seen channels: ${seenCh.size}`);
   console.log(`\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n`);
 }, 30000);
 
@@ -52,38 +80,7 @@ const pv    = s => {
   return parseInt(u.replace(/,/g,''),10)||0;
 };
 
-// ── Pure Random Anonymous Scraper (Incognito Simulation) ──────
-// Hits the homepage with zero cookies to force YouTube to build a
-// 100% fresh, random 'Shorts Shelf'. Rips the IDs directly from HTML.
-async function getHomepageSeeds() {
-  const gl = pick(["US", "GB", "FR", "CA", "AU"]);
-  try {
-    const res = await fetch(`https://www.youtube.com/?gl=${gl}`, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept-Language": "en-US,en;q=0.9"
-      }
-    });
-    const html = await res.text();
-    // ytInitialData contains the "Shorts shelf" for anonymous users
-    const match = html.match(/ytInitialData\s*=\s*({.+?});\s*<\/script>/);
-    if (!match) return [];
-    
-    // We only care about Shorts, they have their own shelf renderer
-    const ids = [];
-    const re = /"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"|shorts\/([a-zA-Z0-9_-]{11})/g;
-    let m;
-    while ((m = re.exec(match[1])) !== null) {
-      if (m[1]) ids.push(m[1]);
-      if (m[2]) ids.push(m[2]);
-    }
-    return [...new Set(ids)];
-  } catch(e) {
-    return [];
-  }
-}
-
-// Single YT poster — MWEB client (confirmed working from Codespace)
+// ── YouTube API callers ───────────────────────────────────────
 async function ytMweb(endpoint, body) {
   try {
     const r = await fetch(`https://www.youtube.com/youtubei/v1/${endpoint}?key=${API_KEY}&prettyPrint=false`, {
@@ -91,12 +88,11 @@ async function ytMweb(endpoint, body) {
       headers: { 'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36' },
       body: JSON.stringify({ context:{client:{clientName:"MWEB",clientVersion:"2.20231207.01.00",hl:"en",gl:"US"}}, ...body })
     });
-    if (!r.ok) { console.error(`  [HTTP ${r.status}] ${endpoint}`); return null; }
+    if (!r.ok) return null;
     return await r.json();
-  } catch(e) { console.error(`  [FETCH ERR] ${endpoint}: ${e.message}`); return null; }
+  } catch(e) { return null; }
 }
 
-// WEB client for channel browse (confirmed working from Codespace)
 async function ytWeb(endpoint, body) {
   try {
     const r = await fetch(`https://www.youtube.com/youtubei/v1/${endpoint}?key=${API_KEY}&prettyPrint=false`, {
@@ -104,12 +100,11 @@ async function ytWeb(endpoint, body) {
       headers: { 'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
       body: JSON.stringify({ context:{client:{clientName:"WEB",clientVersion:"2.20240314.07.00",hl:"en",gl:"US"}}, ...body })
     });
-    if (!r.ok) { console.error(`  [HTTP ${r.status}] ${endpoint}`); return null; }
+    if (!r.ok) return null;
     return await r.json();
-  } catch(e) { console.error(`  [FETCH ERR] ${endpoint}: ${e.message}`); return null; }
+  } catch(e) { return null; }
 }
 
-// Extract ALL video IDs from a raw YT response
 function grabIds(data) {
   if (!data) return [];
   const s = JSON.stringify(data);
@@ -119,11 +114,59 @@ function grabIds(data) {
   return [...out];
 }
 
-// Extract channelId from /next response — the INPUT video's channel
-// appears near the start of the JSON as "channelId":"UC..." 
-function grabChannelId(nextResponseStr) {
-  const m = nextResponseStr.match(/"channelId"\s*:\s*"(UC[a-zA-Z0-9_-]{22})"/);
+function grabChannelId(str) {
+  const m = str.match(/"channelId"\s*:\s*"(UC[a-zA-Z0-9_-]{22})"/);
   return m ? m[1] : null;
+}
+
+// ── Search-Based Seed Generator ──────────────────────────────
+// Calls /search with a niche query to get ~20 diverse video IDs
+async function searchSeeds(query) {
+  try {
+    // EgIQAQ== is the base64 for "Shorts" filter (type=video, duration=short)
+    const data = await ytMweb('search', { query, params: "EgIQAQ%3D%3D" });
+    return grabIds(data);
+  } catch(e) { return []; }
+}
+
+// ── Multi-niche seeding on boot ──────────────────────────────
+async function loadAllSeeds() {
+  console.log(`[🌱] Seeding from ${NICHE_QUERIES.length} diverse niche queries...`);
+  
+  // Run 5 search queries at a time to avoid overwhelming
+  for (let i = 0; i < NICHE_QUERIES.length; i += 5) {
+    const batch = NICHE_QUERIES.slice(i, i + 5);
+    const results = await Promise.all(batch.map(q => searchSeeds(q)));
+    for (const ids of results) {
+      for (const id of ids) {
+        if (!seeds.includes(id)) seeds.push(id);
+      }
+    }
+    console.log(`  [🌱] Batch ${Math.floor(i/5)+1}/${Math.ceil(NICHE_QUERIES.length/5)} → Pool: ${seeds.length} seeds`);
+    await sleep(300);
+  }
+
+  if (seeds.length < 10) {
+    console.log(`[🌱] Search seeding returned too few (${seeds.length}). Adding fallback seeds...`);
+    FALLBACK_SEEDS.forEach(s => { if (!seeds.includes(s)) seeds.push(s); });
+  }
+
+  console.log(`[🌱] ✅ Total seed pool: ${seeds.length} videos across ${NICHE_QUERIES.length} niches`);
+}
+
+// ── Periodic re-seeding (every 60s, pick a random niche query) ──
+async function reseederLoop() {
+  while (true) {
+    await sleep(60000);
+    const query = pick(NICHE_QUERIES);
+    const fresh = await searchSeeds(query);
+    let added = 0;
+    for (const id of fresh) {
+      if (!seeds.includes(id)) { seeds.push(id); added++; }
+    }
+    if (seeds.length > 2000) seeds.splice(0, seeds.length - 2000); // Cap pool size
+    if (added > 0) console.log(`\x1b[33m[🔄 Reseed] "${query}" → +${added} new seeds (pool: ${seeds.length})\x1b[0m`);
+  }
 }
 
 // ── The Ghost Filter ──────────────────────────────────────────
@@ -131,7 +174,6 @@ async function processOne(vid) {
   if (seenVid.has(vid)) return;
   seenVid.add(vid);
 
-  // === Step 1: Get channelId from /next (MWEB, no /player needed) ===
   const nextData = await ytMweb('next', { videoId: vid });
   if (!nextData) { gates.noChannel++; return; }
 
@@ -142,32 +184,19 @@ async function processOne(vid) {
   seenCh.add(chId);
   processed++;
 
-  // Extract publishDate of THIS video from the /next response (free!)
   let thisVideoDate = null;
   const dm = nextStr.match(/"publishDate"\s*:\s*"(\d{4}-\d{2}-\d{2})"/);
   if (dm) thisVideoDate = dm[1];
 
   const id = chId.substring(2);
-  console.log(`\x1b[90m  [🔍 Checking] ${chId} | vid: ${vid}\x1b[0m`);
-
-  // === Step 2: Fetch channel data in parallel ===
-  async function plCount(plId) {
-    const d = await ytWeb('browse', { browseId:`VL${plId}` });
-    if (!d) return 0;
-    const t = JSON.stringify(d);
-    const m = t.match(/"numVideosText".*?"([0-9,]+)"/);
-    if (m) return parseInt(m[1].replace(/,/g,''),10)||0;
-    return 0;
-  }
 
   const [shorts, about, nLong, nLive] = await Promise.all([
     ytWeb('browse', { browseId:chId, params:'EgZzaG9ydHO4AQCSAwDyBgUKA5oBAA%3D%3D' }),
     ytWeb('browse', { browseId:chId, params:'EgVhYm91dLgBAJIDAPIGBgoCMgBKAA%3D%3D' }),
-    Promise.race([plCount(`UULF${id}`), sleep(3000).then(()=>0)]),
-    Promise.race([plCount(`UULV${id}`), sleep(3000).then(()=>0)]),
+    (async () => { const d = await ytWeb('browse', { browseId:`VLUULF${id}` }); if (!d) return 0; const t=JSON.stringify(d); const m=t.match(/"numVideosText".*?"([0-9,]+)"/); return m ? parseInt(m[1].replace(/,/g,''),10)||0 : 0; })(),
+    (async () => { const d = await ytWeb('browse', { browseId:`VLUULV${id}` }); if (!d) return 0; const t=JSON.stringify(d); const m=t.match(/"numVideosText".*?"([0-9,]+)"/); return m ? parseInt(m[1].replace(/,/g,''),10)||0 : 0; })(),
   ]);
 
-  // Extract metadata
   let subs=0, subsTxt='?', chName='?', avatar='', desc='';
   function dig(o) {
     if (Array.isArray(o)){for(const i of o) dig(i); return;}
@@ -180,19 +209,9 @@ async function processOne(vid) {
   }
   dig(about); dig(shorts);
 
-  // === GATE 1: Sub cap ===
-  if (subs > MAX_SUBS) {
-    console.log(`  \x1b[31m[G1 SUBS] ${chName} → ${subsTxt} > 100k\x1b[0m`);
-    gates.subs++; return;
-  }
+  if (subs > MAX_SUBS) { console.log(`  \x1b[31m[G1 SUBS] ${chName} → ${subsTxt} > 100k\x1b[0m`); gates.subs++; return; }
+  if (nLong > 0 || nLive > 0) { console.log(`  \x1b[31m[G2 LONG] ${chName} → long:${nLong} live:${nLive}\x1b[0m`); gates.longLive++; return; }
 
-  // === GATE 2: Shorts-only ===
-  if (nLong > 0 || nLive > 0) {
-    console.log(`  \x1b[31m[G2 LONG] ${chName} → long:${nLong} live:${nLive}\x1b[0m`);
-    gates.longLive++; return;
-  }
-
-  // Parse recent Shorts for traction
   const rs = []; let oldTok = null;
   function ps(o) {
     if (Array.isArray(o)){for(const i of o) ps(i); return;}
@@ -210,22 +229,13 @@ async function processOne(vid) {
   }
   ps(shorts);
 
-  if (rs.length < 3) {
-    console.log(`  \x1b[31m[G2.1 FEW] ${chName} → only ${rs.length} shorts visible\x1b[0m`);
-    gates.fewShorts++; return;
-  }
+  if (rs.length < 3) { gates.fewShorts++; return; }
 
   const avg = Math.floor(rs.reduce((s,v)=>s+v.views,0)/rs.length);
+  if (avg < MIN_AVG) { console.log(`  \x1b[31m[G4 LOW] ${chName} → ${avg.toLocaleString()} avg views\x1b[0m`); gates.traction++; return; }
 
-  // === GATE 4: Traction ===
-  if (avg < MIN_AVG) {
-    console.log(`  \x1b[31m[G4 LOW] ${chName} → ${avg.toLocaleString()} avg views\x1b[0m`);
-    gates.traction++; return;
-  }
-
-  // === GATE 3: Age (most expensive — last) ===
+  // Age gate
   let firstDate = null;
-
   async function getPubDate(vId) {
     const d = await ytMweb('next', { videoId:vId });
     if (!d) return null;
@@ -245,12 +255,8 @@ async function processOne(vid) {
     if (fId) firstDate = await getPubDate(fId);
   }
   if (!firstDate) firstDate = thisVideoDate || await getPubDate(vid);
-  if (!firstDate) { gates.noDate++; console.log(`  \x1b[31m[G3 NODATE] ${chName}\x1b[0m`); return; }
-
-  if (new Date(firstDate) < CUTOFF) {
-    console.log(`  \x1b[31m[G3 OLD] ${chName} → first short: ${firstDate}\x1b[0m`);
-    gates.tooOld++; return;
-  }
+  if (!firstDate) { gates.noDate++; return; }
+  if (new Date(firstDate) < CUTOFF) { console.log(`  \x1b[31m[G3 OLD] ${chName} → ${firstDate}\x1b[0m`); gates.tooOld++; return; }
 
   const ageDays = Math.max(1, Math.floor((Date.now()-new Date(firstDate))/86400000));
 
@@ -265,10 +271,8 @@ async function processOne(vid) {
         [s.video_id,chId,s.title,s.thumbnail,s.views,`https://www.youtube.com/shorts/${s.video_id}`]);
 
     inserted++;
-    console.log(`\x1b[42m\x1b[1m 💚 INSERTED \x1b[0m ${chName} | @${chId} | ${subs.toLocaleString()} subs | ${avg.toLocaleString()} avg | ${ageDays}d old | ${firstDate}`);
-
-    // Add to Golden Seeds for exploration
-    if (!seeds.includes(vid)) { seeds.push(vid); if (seeds.length>500) seeds.shift(); }
+    console.log(`\x1b[42m\x1b[1m 💚 INSERTED \x1b[0m ${chName} | ${subs.toLocaleString()} subs | ${avg.toLocaleString()} avg | ${ageDays}d old`);
+    if (!seeds.includes(vid)) { seeds.push(vid); if (seeds.length>2000) seeds.shift(); }
   } catch(e) {
     console.error(`  \x1b[31m[DB ERR] ${chName}: ${e.message}\x1b[0m`);
     gates.dbErr++;
@@ -276,8 +280,7 @@ async function processOne(vid) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// THREADS — Random walk via /next (the ONLY working endpoint)
-// Each thread: seed → /next → 60 vids → process 3 → new seed
+// THREADS — Random walk via /next, seeded from diverse /search
 // ═══════════════════════════════════════════════════════════════
 async function thread(id) {
   const gl = GL[id % GL.length];
@@ -287,33 +290,22 @@ async function thread(id) {
 
   while (true) {
     try {
-      if (!seed) {
-        // If we somehow run out of seeds, scrape a fresh batch from the homepage
-        const fresh = await getHomepageSeeds();
-        if (fresh.length > 0) fresh.forEach(f => { if(!seeds.includes(f)) seeds.push(f); });
-        seed = pick(seeds) || "kZyTCtV_bqY"; // Fallback if entirely broken
-      }
-
       const data = await ytMweb('next', { videoId:seed, params:"8gEAmgMDCNkI", context:{client:{clientName:"MWEB",clientVersion:"2.20231207.01.00",hl:"en",gl}} });
       const ids = grabIds(data);
 
       if (ids.length === 0) {
-        seed = pick(seeds);
+        seed = pick(seeds); // Jump to a completely different niche
         await sleep(2000);
         continue;
       }
 
       crawled += ids.length;
-
-      // Process 3 random videos sequentially (bounded concurrency)
       const picks = ids.sort(()=>Math.random()-.5).slice(0,3);
       for (const v of picks) await processOne(v);
 
-      // Random walk: pick a new seed from results
       seed = pick(ids);
       await sleep(200 + Math.random()*300);
     } catch(e) {
-      console.error(`\x1b[31m[Thread #${id}] ${e.message}\x1b[0m`);
       seed = pick(seeds);
       await sleep(5000);
     }
@@ -326,8 +318,8 @@ async function thread(id) {
   process.on("unhandledRejection", e => console.error("UNHANDLED:", e?.message || e));
 
   console.log(`\n\x1b[35m╔══════════════════════════════════════════════════╗\x1b[0m`);
-  console.log(`\x1b[35m║   🚀 SHORTRADAR V6.4 — PURE RANDOM ENGINE       ║\x1b[0m`);
-  console.log(`\x1b[35m║   ${THREADS} threads | Incognito Scraper | Direct DB ║\x1b[0m`);
+  console.log(`\x1b[35m║  🚀 SHORTRADAR V6.5 — MULTI-NICHE ENGINE        ║\x1b[0m`);
+  console.log(`\x1b[35m║  ${THREADS} threads | /search seeding | Direct DB    ║\x1b[0m`);
   console.log(`\x1b[35m╚══════════════════════════════════════════════════╝\x1b[0m\n`);
 
   console.log(`[🔑] Gates: <100k subs | 0 long vids | >Dec 2025 | >10k avg views`);
@@ -335,32 +327,29 @@ async function thread(id) {
   try {
     const c = await pool.connect();
     c.release();
-    console.log(`[🔌] CockroachDB: Connected ✅`);
+    console.log(`[🔌] CockroachDB: Connected ✅\n`);
   } catch(e) { console.error(`[❌] DB ERROR:`, e.message); process.exit(1); }
 
-  console.log(`[🌱] Scraping anonymous YouTube homepage for pure random seeds...`);
-  // Try up to 3 times to get a thick starting batch
-  for (let i = 0; i < 3; i++) {
-    const fresh = await getHomepageSeeds();
-    fresh.forEach(f => { if(!seeds.includes(f)) seeds.push(f); });
-    await sleep(200);
-  }
-  
-  if (seeds.length > 0) {
-    console.log(`[🌱] Extracted ${seeds.length} pure random Shorts from anonymous HTML ✅`);
-  } else {
-    console.log(`[🌱] Scraping failed. Using absolute fallback seed.`);
-    seeds.push("kZyTCtV_bqY");
+  // ── Seed from 30 diverse niche queries ──
+  await loadAllSeeds();
+
+  if (seeds.length === 0) {
+    console.error(`[💀] Zero seeds found. Exiting.`);
+    process.exit(1);
   }
 
-  // Sanity check /next
-  console.log(`[🧪] Testing /next...`);
-  const testData = await ytMweb('next', { videoId: seeds[0], params:"8gEAmgMDCNkI" });
+  // Sanity check
+  console.log(`\n[🧪] Testing /next with a random seed...`);
+  const testData = await ytMweb('next', { videoId: pick(seeds), params:"8gEAmgMDCNkI" });
   const testIds = grabIds(testData);
-  const testChId = testData ? grabChannelId(JSON.stringify(testData)) : null;
-  console.log(`[🧪] /next → ${testIds.length} video IDs | channelId: ${testChId || '❌ NOT FOUND'}`);
+  console.log(`[🧪] /next → ${testIds.length} video IDs ${testIds.length > 0 ? '✅' : '❌'}`);
   if (testIds.length === 0) { console.error(`[💀] /next broken. Exiting.`); process.exit(1); }
 
-  console.log(`\n[🔥] Launching ${THREADS} threads...\n`);
+  console.log(`\n[🔥] Launching ${THREADS} threads + reseeder...\n`);
+
+  // Launch reseeder (background loop that adds fresh seeds every 60s)
+  reseederLoop();
+
+  // Launch crawling threads
   for (let i = 1; i <= THREADS; i++) setTimeout(() => thread(i), (i-1)*150);
 })();

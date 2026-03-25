@@ -1,0 +1,13 @@
+{
+  "name": "shortradar-hyper-cluster",
+  "version": "1.0.0",
+  "description": "Multi-Threaded Algorithmic Shorts Crawler for Hugging Face Spaces",
+  "type": "module",
+  "main": "hyper_crawler.mjs",
+  "scripts": {
+    "start": "node hyper_crawler.mjs"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
