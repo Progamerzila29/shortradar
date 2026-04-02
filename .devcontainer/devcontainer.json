@@ -1,5 +1,5 @@
 {
-  "name": "ShortRadar Crawler",
-  "postCreateCommand": "cd /workspaces/shortradar/codespace-engine && npm install",
-  "postStartCommand": "cd /workspaces/shortradar/codespace-engine && nohup node cs_crawler.mjs > crawler.log 2>&1 &"
+  "name": "ShortRadar Go",
+  "postCreateCommand": "cd /workspaces/shortradar && go mod tidy",
+  "postStartCommand": "cd /workspaces/shortradar && cp .env.example .env 2>/dev/null; nohup go run . > crawler.log 2>&1 &"
 }
