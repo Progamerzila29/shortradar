@@ -1,17 +1,9 @@
 import { Client } from 'pg';
+import { POLICY, REASON, passesFirstShortAge } from '../../lib/crawl-policy.mjs';
 
 const API_KEY        = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
 const CLIENT_VERSION = '2.20240314.07.00';
 const CTX            = { context: { client: { clientName: 'WEB', clientVersion: CLIENT_VERSION } } };
-
-// ── Gate 2: Date cutoff — first Short must be AFTER Dec 01 2025
-const CUTOFF = new Date('2025-12-01');
-
-// ── Gate 1: Sub cap
-const MAX_SUBS = 100_000;
-
-// ── Gate 4: Min traction (avg views of last 5 Shorts)
-const MIN_AVG_VIEWS = 10_000;
 
 // ── Max golden seeds stored in KV
 const MAX_GOLDEN_SEEDS = 500;
@@ -73,7 +65,7 @@ function withTimeout(p, ms, fallback = 0) {
 }
 
 function isLikelyMonetized(subscribers, avgViews) {
-    return subscribers >= 1000 && avgViews > 10000;
+    return subscribers >= 1000 && avgViews > POLICY.MIN_AVG_VIEWS;
 }
 
 // ── Append video_id to golden seeds in KV ────────────────────
@@ -197,29 +189,29 @@ export default {
             // ══════════════════════════════════════════════════════════
 
             // Gate 1: Sub cap (free — already fetched)
-            if (subscribers > MAX_SUBS) {
-                console.log(`[GATE 1 REJECT] @${handle} | Subs: ${subscribers} > ${MAX_SUBS}`);
+            if (subscribers > POLICY.MAX_SUBS) {
+                console.log(`[GATE 1 REJECT] @${handle} | Subs: ${subscribers} > ${POLICY.MAX_SUBS}`);
                 await env.SHORT_RADAR_CACHE.put(cacheKey, JSON.stringify({ status: 'ignored', reason: 'Too many subs' }), { expirationTtl: 2592000 });
-                return Response.json({ status: 'rejected', reason: `Sub cap: ${subscribers.toLocaleString()}` });
+                return Response.json({ status: 'rejected', reason: `Sub cap: ${subscribers.toLocaleString()}`, reason_code: REASON.SUBS_OVER_LIMIT });
             }
 
             // Gate 2: Shorts-only (free — already fetched)
-            if (exactLong > 0 || exactLive > 0) {
+            if (exactLong > POLICY.MAX_LONG || exactLive > POLICY.MAX_LIVE) {
                 console.log(`[GATE 2 REJECT] @${handle} | Long: ${exactLong}, Live: ${exactLive}`);
                 await env.SHORT_RADAR_CACHE.put(cacheKey, JSON.stringify({ status: 'ignored', reason: 'Has long/live videos' }), { expirationTtl: 2592000 });
-                return Response.json({ status: 'rejected', reason: `Has ${exactLong} long + ${exactLive} live videos` });
+                return Response.json({ status: 'rejected', reason: `Has ${exactLong} long + ${exactLive} live videos`, reason_code: REASON.HAS_LONG_OR_LIVE });
             }
 
-            if (exactShorts < 3) {
-                console.log(`[GATE 2.1 REJECT] @${handle} | Shorts: ${exactShorts} < 3`);
-                return Response.json({ status: 'rejected', reason: 'Too few shorts' });
+            if (exactShorts < POLICY.MIN_SHORTS) {
+                console.log(`[GATE 2.1 REJECT] @${handle} | Shorts: ${exactShorts} < ${POLICY.MIN_SHORTS}`);
+                return Response.json({ status: 'rejected', reason: 'Too few shorts', reason_code: REASON.TOO_FEW_SHORTS });
             }
 
             // Gate 4: Traction (free — already computed) — checked BEFORE gate 3 to skip expensive date call
-            if (avgViews < MIN_AVG_VIEWS) {
-                console.log(`[GATE 4 REJECT] @${handle} | Avg Views: ${avgViews} < ${MIN_AVG_VIEWS}`);
+            if (avgViews < POLICY.MIN_AVG_VIEWS) {
+                console.log(`[GATE 4 REJECT] @${handle} | Avg Views: ${avgViews} < ${POLICY.MIN_AVG_VIEWS}`);
                 // Don't cache — channel might grow later
-                return Response.json({ status: 'rejected', reason: `Low traction: ${avgViews.toLocaleString()} avg views` });
+                return Response.json({ status: 'rejected', reason: `Low traction: ${avgViews.toLocaleString()} avg views`, reason_code: REASON.LOW_TRACTION });
             }
 
             // Gate 3: Age gate — MOST EXPENSIVE (1 API call), do last
@@ -248,17 +240,28 @@ export default {
                 }
 
                 if (!firstShortDateRaw && crawlerVideoId) firstShortDateRaw = await getPublishDateSafe(crawlerVideoId);
-                if (!firstShortDateRaw) firstShortDateRaw = "2000-01-01";
+            }
+
+            if (!firstShortDateRaw) {
+                console.log(`[GATE 3 REJECT] @${handle} | first_short_date unknown`);
+                return Response.json({ status: 'rejected', reason: 'first_short_date unknown', reason_code: REASON.DATE_UNKNOWN });
+            }
+
+            const ageCheck = passesFirstShortAge(firstShortDateRaw);
+            if (!ageCheck.ok) {
+                console.log(`[GATE 3 REJECT] @${handle} | Date: ${firstShortDateRaw} | ${ageCheck.reason}`);
+                if (ageCheck.reason === REASON.FIRST_SHORT_TOO_OLD) {
+                    await env.SHORT_RADAR_CACHE.put(cacheKey, JSON.stringify({ status: 'ignored', reason: 'Too Old' }), { expirationTtl: 2592000 });
+                }
+                return Response.json({
+                    status: 'rejected',
+                    reason: ageCheck.reason === REASON.FIRST_SHORT_TOO_OLD ? `Too old: first short ${firstShortDateRaw}` : 'first_short_date unknown',
+                    reason_code: ageCheck.reason,
+                });
             }
 
             const firstShortDate = new Date(firstShortDateRaw);
             const channelAgeDays = Math.max(1, Math.floor((Date.now() - firstShortDate) / 86_400_000));
-
-            if (firstShortDate < CUTOFF) {
-                console.log(`[GATE 3 REJECT] @${handle} | Date: ${firstShortDateRaw} < ${CUTOFF.toISOString().split('T')[0]}`);
-                await env.SHORT_RADAR_CACHE.put(cacheKey, JSON.stringify({ status: 'ignored', reason: 'Too Old' }), { expirationTtl: 2592000 });
-                return Response.json({ status: 'rejected', reason: `Too old: first short ${firstShortDateRaw}` });
-            }
             
             console.log(`[🎯 GATE PASSED!] @${handle} | Subs: ${subscribers} | Avg Views: ${avgViews} | Age: ${channelAgeDays} days`);
 

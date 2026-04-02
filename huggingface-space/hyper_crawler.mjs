@@ -1,4 +1,6 @@
 import express from 'express';
+import { isVideoPublishRecentEnough } from '../lib/crawl-policy.mjs';
+import { extractShortsVideoIds } from '../lib/innertube-shorts.mjs';
 
 const WORKER_API = "https://shortradar-scraper-api.shortradar.workers.dev";
 const PARALLEL_THREADS = 20;
@@ -77,7 +79,8 @@ async function verifyAndDispatch(vid) {
             }
             return;
         }
-        if (publishDate < "2025-01-01") { return; } // silently drop old
+        const recent = isVideoPublishRecentEnough(publishDate);
+        if (!recent.ok) return;
         process.stdout.write(`\n\x1b[32m✅ [${vid} — ${publishDate}]\x1b[0m`);
         dispatchToWorker(vid, channelId, publishDate);
     } catch(_) {}

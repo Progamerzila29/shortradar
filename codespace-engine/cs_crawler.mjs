@@ -1,11 +1,12 @@
 import pkg from 'pg';
 const { Pool } = pkg;
+import { POLICY, REASON, evaluateChannelGates } from '../lib/crawl-policy.mjs';
+import { extractShortsVideoIds } from '../lib/innertube-shorts.mjs';
 
 // ================================================================
 // SHORTRADAR V6.5 — MULTI-NICHE SEARCH-SEEDED ENGINE
 // ✅ Zero Cloudflare | ✅ Direct CockroachDB | ✅ /search seeding
-// ✅ 20+ genre queries → 400+ diverse seeds → zero echo chamber
-// ✅ Re-seeds every 60s to escape recommendation bubbles
+// ✅ Shared gates: ../lib/crawl-policy.mjs (90d first short, 0 long/live)
 // ================================================================
 
 const DATABASE_URL = 'postgresql://muataz:0L27YGOK_Eircx-52BD2Ig@shortradar-db-13409.jxf.gcp-europe-west3.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full';
@@ -13,10 +14,6 @@ const pool = new Pool({ connectionString: DATABASE_URL, max: 10, ssl: { rejectUn
 
 const API_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 
-// ── Gates ─────────────────────────────────────────────────────
-const CUTOFF   = new Date('2025-12-01');
-const MAX_SUBS = 100_000;
-const MIN_AVG  = 10_000;
 const THREADS  = 20;
 
 // ── 30 diverse niche queries for search seeding ──────────────
@@ -50,7 +47,7 @@ const FALLBACK_SEEDS = [
 ];
 
 // ── Stats ─────────────────────────────────────────────────────
-let crawled=0, processed=0, inserted=0;
+let crawled=0, processed=0, inserted=0, shortsStructured=0, naiveFallbackIds=0;
 const gates = { noChannel:0, dupChannel:0, subs:0, longLive:0, fewShorts:0, traction:0, tooOld:0, noDate:0, dbErr:0 };
 const seeds = [];
 const seenVid = new Set();
@@ -64,6 +61,7 @@ setInterval(() => {
   console.log(`\n\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m`);
   console.log(`⏱ ${m}min | 🔎 ${crawled.toLocaleString()} crawled | ✅ ${processed} checked | 💚 ${inserted} inserted | 📈 ${r}/min`);
   console.log(`🚫 Drops → noChId:${gates.noChannel} | dupCh:${gates.dupChannel} | subs:${gates.subs} | long/live:${gates.longLive} | fewShorts:${gates.fewShorts} | lowViews:${gates.traction} | tooOld:${gates.tooOld} | noDate:${gates.noDate} | db:${gates.dbErr}`);
+  console.log(`📊 /next feed: shorts-structured batches:${shortsStructured} | naive-regex fallback batches:${naiveFallbackIds}`);
   console.log(`🌱 Seed pool: ${seeds.length} | Seen vids: ${seenVid.size} | Seen channels: ${seenCh.size}`);
   console.log(`\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n`);
 }, 30000);
@@ -190,11 +188,12 @@ async function processOne(vid) {
 
   const id = chId.substring(2);
 
-  const [shorts, about, nLong, nLive] = await Promise.all([
+  const [shorts, about, nLong, nLive, exactShorts] = await Promise.all([
     ytWeb('browse', { browseId:chId, params:'EgZzaG9ydHO4AQCSAwDyBgUKA5oBAA%3D%3D' }),
     ytWeb('browse', { browseId:chId, params:'EgVhYm91dLgBAJIDAPIGBgoCMgBKAA%3D%3D' }),
     (async () => { const d = await ytWeb('browse', { browseId:`VLUULF${id}` }); if (!d) return 0; const t=JSON.stringify(d); const m=t.match(/"numVideosText".*?"([0-9,]+)"/); return m ? parseInt(m[1].replace(/,/g,''),10)||0 : 0; })(),
     (async () => { const d = await ytWeb('browse', { browseId:`VLUULV${id}` }); if (!d) return 0; const t=JSON.stringify(d); const m=t.match(/"numVideosText".*?"([0-9,]+)"/); return m ? parseInt(m[1].replace(/,/g,''),10)||0 : 0; })(),
+    (async () => { const d = await ytWeb('browse', { browseId:`VLUUSH${id}` }); if (!d) return 0; const t=JSON.stringify(d); const m=t.match(/"numVideosText".*?"([0-9,]+)"/); return m ? parseInt(m[1].replace(/,/g,''),10)||0 : 0; })(),
   ]);
 
   let subs=0, subsTxt='?', chName='?', avatar='', desc='';
@@ -208,9 +207,6 @@ async function processOne(vid) {
     for (const v of Object.values(o)) dig(v);
   }
   dig(about); dig(shorts);
-
-  if (subs > MAX_SUBS) { console.log(`  \x1b[31m[G1 SUBS] ${chName} → ${subsTxt} > 100k\x1b[0m`); gates.subs++; return; }
-  if (nLong > 10 || nLive > 10) { console.log(`  \x1b[31m[G2 LONG] ${chName} → long:${nLong} live:${nLive}\x1b[0m`); gates.longLive++; return; }
 
   const rs = []; let oldTok = null;
   function ps(o) {
@@ -229,10 +225,7 @@ async function processOne(vid) {
   }
   ps(shorts);
 
-  if (rs.length < 3) { gates.fewShorts++; return; }
-
-  const avg = Math.floor(rs.reduce((s,v)=>s+v.views,0)/rs.length);
-  if (avg < MIN_AVG) { console.log(`  \x1b[31m[G4 LOW] ${chName} → ${avg.toLocaleString()} avg views\x1b[0m`); gates.traction++; return; }
+  const avg = rs.length ? Math.floor(rs.reduce((s,v)=>s+v.views,0)/rs.length) : 0;
 
   // Age gate
   let firstDate = null;
@@ -255,8 +248,25 @@ async function processOne(vid) {
     if (fId) firstDate = await getPubDate(fId);
   }
   if (!firstDate) firstDate = thisVideoDate || await getPubDate(vid);
-  if (!firstDate) { gates.noDate++; return; }
-  if (new Date(firstDate) < CUTOFF) { console.log(`  \x1b[31m[G3 OLD] ${chName} → ${firstDate}\x1b[0m`); gates.tooOld++; return; }
+
+  const gate = evaluateChannelGates({
+    subscribers: subs,
+    exactLong: nLong,
+    exactLive: nLive,
+    exactShorts,
+    avgViews: avg,
+    firstShortDateRaw: firstDate,
+  });
+  if (!gate.ok) {
+    const r = gate.reason;
+    if (r === REASON.SUBS_OVER_LIMIT) { console.log(`  \x1b[31m[G1 SUBS] ${chName} → ${subsTxt} > ${POLICY.MAX_SUBS}\x1b[0m`); gates.subs++; }
+    else if (r === REASON.HAS_LONG_OR_LIVE) { console.log(`  \x1b[31m[G2 LONG] ${chName} → long:${nLong} live:${nLive}\x1b[0m`); gates.longLive++; }
+    else if (r === REASON.TOO_FEW_SHORTS) { gates.fewShorts++; }
+    else if (r === REASON.LOW_TRACTION) { console.log(`  \x1b[31m[G4 LOW] ${chName} → ${avg.toLocaleString()} avg views\x1b[0m`); gates.traction++; }
+    else if (r === REASON.DATE_UNKNOWN) { gates.noDate++; }
+    else if (r === REASON.FIRST_SHORT_TOO_OLD) { console.log(`  \x1b[31m[G3 OLD] ${chName} → ${firstDate}\x1b[0m`); gates.tooOld++; }
+    return;
+  }
 
   const ageDays = Math.max(1, Math.floor((Date.now()-new Date(firstDate))/86400000));
 
@@ -264,7 +274,7 @@ async function processOne(vid) {
   const cl = await pool.connect();
   try {
     await cl.query(`UPSERT INTO channels (channel_id,handle,channel_name,description,avatar_url,channel_url,subscribers,total_videos,is_monetized,first_short_date,channel_age_days,average_views_last5,views_to_sub_ratio,growth_score,videos_shorts,videos_long) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
-      [chId,'@'+chName,chName,desc.substring(0,500),avatar,`https://youtube.com/channel/${chId}`,subs,rs.length,subs>=1000&&avg>10000,firstDate,ageDays,avg,subs>0?+(avg/subs).toFixed(2):0,+(avg/ageDays).toFixed(2),rs.length,nLong]);
+      [chId,'@'+chName,chName,desc.substring(0,500),avatar,`https://youtube.com/channel/${chId}`,subs,rs.length,subs>=1000&&avg>POLICY.MIN_AVG_VIEWS,firstDate,ageDays,avg,subs>0?+(avg/subs).toFixed(2):0,+(avg/ageDays).toFixed(2),rs.length,nLong]);
 
     for (const s of rs)
       await cl.query(`UPSERT INTO shorts (video_id,channel_id,title,thumbnail,views,video_url) VALUES ($1,$2,$3,$4,$5,$6)`,
@@ -291,7 +301,13 @@ async function thread(id) {
   while (true) {
     try {
       const data = await ytMweb('next', { videoId:seed, params:"8gEAmgMDCNkI", context:{client:{clientName:"MWEB",clientVersion:"2.20231207.01.00",hl:"en",gl}} });
-      const ids = grabIds(data);
+      let ids = extractShortsVideoIds(data);
+      if (ids.length === 0) {
+        ids = grabIds(data);
+        naiveFallbackIds++;
+      } else {
+        shortsStructured++;
+      }
 
       if (ids.length === 0) {
         seed = pick(seeds); // Jump to a completely different niche
@@ -322,7 +338,7 @@ async function thread(id) {
   console.log(`\x1b[35m║  ${THREADS} threads | /search seeding | Direct DB    ║\x1b[0m`);
   console.log(`\x1b[35m╚══════════════════════════════════════════════════╝\x1b[0m\n`);
 
-  console.log(`[🔑] Gates: <100k subs | 0 long vids | >Dec 2025 | >10k avg views`);
+  console.log(`[🔑] Gates: <${POLICY.MAX_SUBS} subs | long≤${POLICY.MAX_LONG} live≤${POLICY.MAX_LIVE} | first Short ≤${POLICY.FIRST_SHORT_MAX_AGE_DAYS}d | ≥${POLICY.MIN_AVG_VIEWS} avg views | ≥${POLICY.MIN_SHORTS} shorts (tab count)`);
 
   try {
     const c = await pool.connect();
@@ -341,7 +357,8 @@ async function thread(id) {
   // Sanity check
   console.log(`\n[🧪] Testing /next with a random seed...`);
   const testData = await ytMweb('next', { videoId: pick(seeds), params:"8gEAmgMDCNkI" });
-  const testIds = grabIds(testData);
+  const testStructured = extractShortsVideoIds(testData);
+  const testIds = testStructured.length ? testStructured : grabIds(testData);
   console.log(`[🧪] /next → ${testIds.length} video IDs ${testIds.length > 0 ? '✅' : '❌'}`);
   if (testIds.length === 0) { console.error(`[💀] /next broken. Exiting.`); process.exit(1); }
 
