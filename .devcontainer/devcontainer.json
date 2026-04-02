@@ -1,5 +1,5 @@
 {
   "name": "ShortRadar Go",
   "postCreateCommand": "cd /workspaces/shortradar && go mod tidy",
-  "postStartCommand": "cd /workspaces/shortradar && cp .env.example .env 2>/dev/null; nohup go run . > crawler.log 2>&1 &"
+  "postStartCommand": "cd /workspaces/shortradar && nohup go run . > crawler.log 2>&1 &"
 }
